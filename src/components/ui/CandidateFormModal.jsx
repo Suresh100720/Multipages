@@ -8,7 +8,7 @@ import CandidateForm from "../../components/ui/CandidateForm";
  * Professional White/Neutral Modal for Candidate Management.
  * Modularized to use CandidateForm.jsx.
  */
-const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => {
+const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkMode }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -25,12 +25,15 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => 
     try {
       if (editData) {
         await updateCandidate(editData._id, values);
-        message.success("Candidate record updated.");
+        message.success("Candidate updated successfully!");
       } else {
         await addCandidate(values);
-        message.success("New candidate added successfully.");
+        message.success("Candidate added successfully!");
       }
-      handleCancel();
+      // Close without confirmation when save is successful
+      setOpen(false);
+      clearEdit();
+      form.resetFields();
       refresh();
     } catch (error) {
       message.error("Failed to save changes. Please try again.");
@@ -38,9 +41,19 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => 
   };
 
   const handleCancel = () => {
-    setOpen(false);
-    clearEdit();
-    form.resetFields();
+    Modal.confirm({
+      title: "Confirm Cancellation",
+      content: "Are you sure you want to cancel? Any unsaved changes will be lost.",
+      okText: "Cancel",
+      okType: "danger",
+      cancelText: "Continue Editing",
+      centered: true,
+      onOk: () => {
+        setOpen(false);
+        clearEdit();
+        form.resetFields();
+      },
+    });
   };
 
   const isEdit = !!editData;
@@ -55,24 +68,31 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => 
       closable={false}
       styles={{ body: { padding: 0 } }}
       style={{ borderRadius: 12, overflow: "hidden" }}
+      className={darkMode ? "dark-mode-modal" : ""}
     >
-      {/* ── Professional Header (No colors/gradients) ── */}
+      {/* ── Professional Header ── */}
       <div className="border-bottom" style={{
         backgroundColor: "#fff",
         padding: "20px 32px",
         position: "relative",
+        borderBottom: `1px solid #e2e8f0`
       }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>
           {isEdit ? "Edit Candidate Information" : "Register New Candidate"}
         </div>
-        <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>
-          {isEdit ? "Update the professional profile details below." : "Enter comprehensive professional details to create a new profile."}
-        </div>
         
         {/* Clean Close Button with Hover Effect */}
         <button
-          onClick={handleCancel}
+          onClick={() => handleCancel()}
           className="btn btn-light rounded-circle shadow-sm"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#f1f5f9";
+            e.currentTarget.style.transform = "scale(1.1)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "#fff";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
           style={{
             position: "absolute",
             top: 20,
@@ -82,8 +102,10 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => 
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "1px solid #e2e8f0",
+            border: `1px solid #e2e8f0`,
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            cursor: "pointer",
+            background: "#fff"
           }}
         >
           <CloseOutlined style={{ fontSize: 14, color: "#64748b" }} />
@@ -91,8 +113,8 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit }) => 
       </div>
 
       {/* ── Modular Form Content ── */}
-      <div style={{ padding: "28px 32px" }}>
-        <CandidateForm form={form} onFinish={onFinish} isEdit={isEdit} />
+      <div style={{ padding: "28px 32px", background: "#fff" }}>
+        <CandidateForm form={form} onFinish={onFinish} isEdit={isEdit} darkMode={false} />
       </div>
     </Modal>
   );

@@ -1,8 +1,7 @@
 import { useLocation } from "react-router-dom";
 
 const PAGE_TITLES = {
-  "/":           "Dashboard",
-  "/candidates": "Candidates",
+  "/": "Dashboard",
 };
 
 const HeaderBar = ({ darkMode, toggleTheme }) => {

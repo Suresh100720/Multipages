@@ -1,4 +1,4 @@
-import { Input, Select, Form, Button, message } from "antd";
+import { Input, Select, Form, Button, Radio } from "antd";
 import {
   UserOutlined, MailOutlined, BankOutlined,
   EnvironmentOutlined, GlobalOutlined, TrophyOutlined,
@@ -23,16 +23,6 @@ const experienceOptions = [
   { value: "5+ Years", label: "5+ Years" },
 ];
 
-const statusOptions = [
-  { value: "Active", label: "Active" },
-  { value: "Inactive", label: "Inactive" },
-  { value: "New", label: "New" },
-  { value: "Interviewing", label: "Interviewing" },
-  { value: "Hired", label: "Hired" },
-  { value: "Screening", label: "Screening" },
-  { value: "Rejected", label: "Rejected" },
-];
-
 /**
  * Clean, professional Candidate Form Component.
  * Uses Bootstrap for layout and Ant Design for inputs and validation.
@@ -43,8 +33,8 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={{ status: "New" }}
-      className="p-1"
+      initialValues={{ status: "Active" }}
+      className="p-0"
     >
       <div className="container-fluid p-0">
         <div className="row g-3">
@@ -52,21 +42,21 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
           <div className="col-md-6">
             <Form.Item
               name="name"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Name</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Name</span>}
               rules={[{ required: true, message: "Name is required" }]}
             >
               <Input 
-                prefix={<UserOutlined className="text-muted" />} 
+                prefix={<UserOutlined style={{ color: "#cbd5e1" }} />} 
                 placeholder="Ex: John Doe" 
                 size="large"
-                className="rounded-3 border-light-subtle shadow-sm"
+                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
               />
             </Form.Item>
           </div>
           <div className="col-md-6">
             <Form.Item
               name="email"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Email</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Email</span>}
               rules={[
                 { required: true, message: "Email is required" },
                 { 
@@ -80,10 +70,10 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
               ]}
             >
               <Input 
-                prefix={<MailOutlined className="text-muted" />} 
+                prefix={<MailOutlined style={{ color: "#cbd5e1" }} />} 
                 placeholder="john@example.com" 
                 size="large"
-                className="rounded-3 border-light-subtle shadow-sm"
+                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
               />
             </Form.Item>
           </div>
@@ -92,46 +82,47 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
           <div className="col-md-6">
             <Form.Item
               name="role"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Role</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Role</span>}
               rules={[{ required: true, message: "Role selection is required" }]}
             >
               <Select
                 placeholder="Select role"
                 size="large"
-                className="shadow-sm custom-select-clean"
+                style={{ borderRadius: '8px', background: '#fff' }}
                 options={roleOptions}
-                suffixIcon={<BankOutlined className="text-muted" />}
+                suffixIcon={<BankOutlined style={{ color: "#cbd5e1" }} />}
               />
             </Form.Item>
           </div>
           <div className="col-md-6">
             <Form.Item
               name="experience"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Experience</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Experience</span>}
               rules={[{ required: true, message: "Experience is required" }]}
             >
               <Select
                 placeholder="Select years"
                 size="large"
-                className="shadow-sm custom-select-clean"
+                style={{ borderRadius: '8px', background: '#fff' }}
                 options={experienceOptions}
-                suffixIcon={<TrophyOutlined className="text-muted" />}
+                suffixIcon={<TrophyOutlined style={{ color: "#cbd5e1" }} />}
               />
             </Form.Item>
           </div>
 
-          {/* Status */}
+          {/* Status - Radio Buttons */}
           <div className="col-12">
             <Form.Item
               name="status"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Current Status</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Current Status</span>}
               rules={[{ required: true, message: "Status is required" }]}
             >
-              <Select 
-                placeholder="Current processing status" 
-                size="large"
-                className="shadow-sm"
-                options={statusOptions} 
+              <Radio.Group
+                options={[
+                  { label: <span style={{ fontWeight: 500, color: "#1e293b" }}>Active</span>, value: "Active" },
+                  { label: <span style={{ fontWeight: 500, color: "#1e293b" }}>Inactive</span>, value: "Inactive" },
+                ]}
+                style={{ display: "flex", gap: "20px" }}
               />
             </Form.Item>
           </div>
@@ -140,28 +131,28 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
           <div className="col-md-6">
             <Form.Item
               name="state"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>State</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>State</span>}
               rules={[{ required: true, message: "State is required" }]}
             >
               <Input 
-                prefix={<EnvironmentOutlined className="text-muted" />} 
+                prefix={<EnvironmentOutlined style={{ color: "#cbd5e1" }} />} 
                 placeholder="Ex: Karnataka" 
                 size="large"
-                className="rounded-3 border-light-subtle shadow-sm"
+                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
               />
             </Form.Item>
           </div>
           <div className="col-md-6">
             <Form.Item
               name="country"
-              label={<span className="fw-bold text-secondary text-uppercase" style={{ fontSize: '11px' }}>Country</span>}
+              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Country</span>}
               rules={[{ required: true, message: "Country is required" }]}
             >
               <Input 
-                prefix={<GlobalOutlined className="text-muted" />} 
+                prefix={<GlobalOutlined style={{ color: "#cbd5e1" }} />} 
                 placeholder="Ex: India" 
                 size="large"
-                className="rounded-3 border-light-subtle shadow-sm"
+                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
               />
             </Form.Item>
           </div>
@@ -173,11 +164,11 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
             <Button
               size="large"
               type="text"
-              className="fw-semibold text-secondary"
+              className="fw-semibold"
               onClick={() => form.resetFields()}
-              style={{ borderRadius: '8px' }}
+              style={{ borderRadius: '8px', color: '#64748b' }}
             >
-              Reset Form
+              Reset
             </Button>
             <Button
               type="primary"
@@ -186,12 +177,12 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
               className="px-4 shadow"
               style={{ 
                 borderRadius: '8px',
-                background: '#1e293b',
+                background: '#1890ff',
                 border: 'none',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
               }}
             >
-              {isEdit ? "Update Details" : "Save Candidate"}
+              {isEdit ? "Update Candidate" : "Save Candidate"}
             </Button>
           </div>
         </div>

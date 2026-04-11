@@ -2,12 +2,10 @@ import { useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
   DashboardOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 
 const NAV = [
-  { to: "/",            label: "Dashboard", icon: <DashboardOutlined /> },
-  { to: "/candidates",  label: "Candidates", icon: <TeamOutlined /> },
+  { to: "/", label: "Dashboard", icon: <DashboardOutlined /> },
 ];
 
 const Sidebar = ({ darkMode }) => {
