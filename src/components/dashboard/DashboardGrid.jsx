@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 
 import AgGridTable from "../ui/AgGridTable";
+import StatusBadge from "../ui/StatusBadge";
 import { exportToExcel } from "../../utils/exportExcel";
 import { deleteCandidate, bulkDelete } from "../../services/api";
 
@@ -58,6 +59,12 @@ const ResumeCellRenderer = ({ value }) => (
     ) : (
       <span className="text-secondary" style={{ fontSize: 13 }}>—</span>
     )}
+  </div>
+);
+
+const StatusCellRenderer = ({ value }) => (
+  <div className="d-flex align-items-center h-100">
+    <StatusBadge status={value} />
   </div>
 );
 
@@ -212,6 +219,7 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     {
       field: "status",
       headerName: "Status",
+      cellRenderer: StatusCellRenderer,
       minWidth: 120,
       flex: 1,
     },

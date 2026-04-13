@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import DashboardGrid from "../../components/dashboard/DashboardGrid";
 import CandidateFormModal from "../../components/ui/CandidateFormModal";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import { fetchCandidates } from "../../services/api";
 import { useAppContext } from "../../context/AppContext";
 
 const Candidates = ({ darkMode }) => {
-  const { candidates, setCandidates, setLoading, setError } = useAppContext();
+  const { candidates, setCandidates, loading, setLoading, setError } = useAppContext();
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
@@ -32,18 +33,22 @@ const Candidates = ({ darkMode }) => {
   return (
     <div>
       <h2 style={{ color: darkMode ? "#f8fafc" : "#1e293b", marginBottom: "20px" }}>Candidates</h2>
-      <DashboardGrid
-        rowData={candidates}
-        onAddCandidate={() => {
-          setEditData(null);
-          setOpen(true);
-        }}
-        onEditCandidate={(candidate) => {
-          setEditData(candidate);
-          setOpen(true);
-        }}
-        refreshData={loadData}
-      />
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <DashboardGrid
+          rowData={candidates}
+          onAddCandidate={() => {
+            setEditData(null);
+            setOpen(true);
+          }}
+          onEditCandidate={(candidate) => {
+            setEditData(candidate);
+            setOpen(true);
+          }}
+          refreshData={loadData}
+        />
+      )}
       <CandidateFormModal
         open={open}
         setOpen={setOpen}

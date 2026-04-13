@@ -127,34 +127,50 @@ const Dashboard = ({ darkMode = false }) => {
 
       {/* ── StatCard Candidates Modal ── */}
       <Modal
-        open={statCardModal.open}
-        onCancel={() => setStatCardModal({ ...statCardModal, open: false })}
-        footer={null}
-        width={1000}
-        centered
-        title={
-          <span style={{ fontSize: "20px", fontWeight: 800, color: darkMode ? "#f1f5f9" : "#1e293b" }}>
-            {statCardModal.type === "applied"
-              ? "Applied Candidates"
-              : `${statCardModal.type?.charAt(0).toUpperCase()}${statCardModal.type?.slice(1)} Candidates`}
-          </span>
-        }
-        styles={{
-          body: { padding: "0 24px 24px 24px", background: darkMode ? "#1e293b" : "#fff" },
-          mask: { backdropFilter: "blur(4px)" }
+  open={statCardModal.open}
+  onCancel={() => setStatCardModal({ ...statCardModal, open: false })}
+  footer={null}
+  width={1200}
+  centered
+>
+  {/* Header */}
+  <div style={{ marginBottom: 16 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <h2 style={{ margin: 0, fontWeight: 700 }}>
+        {statCardModal.type === "applied"
+          ? "Applied Candidates"
+          : `${statCardModal.type?.charAt(0).toUpperCase()}${statCardModal.type?.slice(1)} Candidates`}
+      </h2>
+
+      <span
+        style={{
+          background: "#eef2ff",
+          color: "#4338ca",
+          padding: "4px 10px",
+          borderRadius: 20,
+          fontSize: 12,
+          fontWeight: 600,
         }}
       >
-        <div style={{ marginTop: 16 }}>
-          <AgGridTable
-            rowData={statCardModal.data}
-            columnDefs={modalColumnDefs}
-            gridId={`stat-${statCardModal.type}`}
-            paginationPageSize={10}
-            theme={darkMode ? "ag-theme-alpine-dark" : "ag-theme-alpine"}
-            enableCheckboxes={false}
-          />
-        </div>
-      </Modal>
+        {statCardModal.data.length} candidates
+      </span>
+    </div>
+
+    <p style={{ margin: "6px 0 0", color: "#64748b", fontSize: 13 }}>
+      Complete list of all registered candidates
+    </p>
+  </div>
+
+  <div style={{ height: 1, background: "#e5e7eb", marginBottom: 16 }} />
+
+  {/* 🔥 USE DashboardGrid HERE */}
+  <DashboardGrid
+    rowData={statCardModal.data}
+    onAddCandidate={() => {}}
+    onEditCandidate={() => {}}
+    refreshData={() => {}}
+  />
+</Modal>
     </div>
   );
 };

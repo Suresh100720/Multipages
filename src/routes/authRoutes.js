@@ -1,22 +1,14 @@
-import express from "express";
-import jwt from "jsonwebtoken";
+import { Navigate } from "react-router-dom";
 
-const router = express.Router();
+export const isAuthenticated = () => {
+  return !!localStorage.getItem("token");
+};
 
-router.post("/login", (req, res) => {
-  const { email, password } = req.body;
+export const ProtectedRoute = ({ children }) => {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+};
 
-  if (email === "admin@gmail.com" && password === "1234") {
-    return res.json({
-      token: jwt.sign({ role: "admin" }, "secret"),
-      role: "admin",
-    });
-  }
-
-  return res.json({
-    token: jwt.sign({ role: "user" }, "secret"),
-    role: "user",
-  });
-});
-
-export default router;
+export const logout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/login";
+};
