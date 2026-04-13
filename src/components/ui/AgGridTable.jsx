@@ -15,6 +15,7 @@ const AgGridTable = ({
   onColumnChanged,
   paginationPageSize = 10,
   gridId = "defaultGrid",
+  enableCheckboxes = true,
   ...props
 }) => {
   const gridRef = useRef();
@@ -38,6 +39,13 @@ const AgGridTable = ({
 
   const themeClass = props.theme || "ag-theme-alpine";
 
+  const rowSelectionConfig = enableCheckboxes ? {
+    mode: "multiRow",
+    headerCheckbox: true,
+    checkboxes: true,
+    enableClickSelection: false,
+  } : undefined;
+
   return (
     <div id={gridId} className={themeClass} style={{ width: "100%" }}>
       <AgGridReact
@@ -49,12 +57,7 @@ const AgGridTable = ({
         onColumnResized={onColumnChanged}
         onColumnMoved={onColumnChanged}
         domLayout="autoHeight"
-        rowSelection={{
-          mode: "multiRow",
-          headerCheckbox: true,
-          checkboxes: true,
-          enableClickSelection: false,
-        }}
+        rowSelection={rowSelectionConfig}
         pagination={true}
         paginationPageSize={paginationPageSize}
         paginationPageSizeSelector={[5, 10, 20, 50]}

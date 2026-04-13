@@ -6,6 +6,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   MoreOutlined,
+  FilePdfOutlined,
 } from "@ant-design/icons";
 
 import AgGridTable from "../ui/AgGridTable";
@@ -37,6 +38,26 @@ const RoleCellRenderer = ({ value }) => (
     <span className="text-secondary fw-semibold" style={{ fontSize: 13 }}>
       {value || "N/A"}
     </span>
+  </div>
+);
+
+const ResumeCellRenderer = ({ value }) => (
+  <div className="d-flex align-items-center h-100">
+    {value ? (
+      <Tooltip title="Download Resume">
+        <a 
+          href={`http://127.0.0.1:5000/uploads/${value}`} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: "#6366f1", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}
+        >
+          <FilePdfOutlined style={{ fontSize: 16 }} />
+          <span style={{ fontSize: 13, fontWeight: 500 }}>View</span>
+        </a>
+      </Tooltip>
+    ) : (
+      <span className="text-secondary" style={{ fontSize: 13 }}>—</span>
+    )}
   </div>
 );
 
@@ -205,6 +226,14 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
       headerName: "Country",
       minWidth: 110,
       flex: 1,
+    },
+    {
+      field: "resume",
+      headerName: "Resume",
+      cellRenderer: ResumeCellRenderer,
+      minWidth: 100,
+      flex: 1,
+      sortable: false,
     },
     {
       headerName: "Actions",

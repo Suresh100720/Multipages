@@ -112,8 +112,8 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
         <button
           onClick={handleCancel}
           style={{
-            width: 32, height: 32, borderRadius: "50%",
-            border: `1px solid ${borderCol}`, background: "transparent",
+            width: 32, height: 32, borderRadius: 4,
+            border: "none", background: "transparent",
             cursor: "pointer", display: "flex", alignItems: "center",
             justifyContent: "center", color: labelCol, fontSize: 16, fontWeight: 700,
           }}
@@ -166,7 +166,8 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
 
           <Form.Item
             name="skills"
-            label={<span style={labelStyle}>Key Skills</span>}
+            label={<span style={labelStyle}>Key Skills <span style={{ color: "#dc2626" }}>*</span></span>}
+            rules={[{ required: true, message: "Please select at least one skill" }]}
           >
             <Select
               mode="multiple"
@@ -199,9 +200,10 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
 
           <Form.Item
             name="resume"
-            label={<span style={labelStyle}>Upload Resume</span>}
+            label={<span style={labelStyle}>Upload Resume <span style={{ color: "#dc2626" }}>*</span></span>}
             valuePropName="fileList"
             getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+            rules={[{ required: true, message: "Resume upload is required" }]}
           >
             <Upload 
               maxCount={1} 

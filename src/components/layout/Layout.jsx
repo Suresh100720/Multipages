@@ -1,8 +1,17 @@
-import { Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import HeaderBar from "./HeaderBar";
+import Settings from "../../pages/Settings/Settings";
 
 const Layout = ({ darkMode, toggleTheme }) => {
+  const [showSettings, setShowSettings] = useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    setShowSettings(false);
+  }, [pathname]);
+
   return (
     <div
       style={{
@@ -23,7 +32,7 @@ const Layout = ({ darkMode, toggleTheme }) => {
           overflowY: "auto",
         }}
       >
-        <Sidebar darkMode={darkMode} />
+        <Sidebar darkMode={darkMode} onSettingsClick={() => setShowSettings(true)} />
       </div>
 
       {/* Main content */}
@@ -37,7 +46,11 @@ const Layout = ({ darkMode, toggleTheme }) => {
             padding: "24px",
           }}
         >
-          <Outlet />
+          {showSettings ? (
+            <Settings darkMode={darkMode} onClose={() => setShowSettings(false)} />
+          ) : (
+            <Outlet />
+          )}
         </div>
       </div>
     </div>

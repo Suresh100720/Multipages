@@ -77,7 +77,7 @@ const StatCards = ({ data = [], appliedCount = 0, onCardClick }) => {
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.03)"
+                boxShadow: "0 4px 10px rgba(0,0,0,0.03)",
               }}>
                 {stat.icon}
               </div>

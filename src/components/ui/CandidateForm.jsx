@@ -25,12 +25,12 @@ const experienceOptions = [
 
 const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
   /* ── Dynamic tokens based on dark mode ── */
-  const inputBg    = darkMode ? "#0f172a" : "#fff";
+  const inputBg = darkMode ? "#0f172a" : "#fff";
   const inputColor = darkMode ? "#f1f5f9" : "#1e293b";
-  const borderCol  = darkMode ? "#475569" : "#e2e8f0";
-  const labelColor = darkMode ? "#94a3b8" : "#64748b";
-  const iconColor  = darkMode ? "#64748b" : "#cbd5e1";
-  const radioText  = darkMode ? "#cbd5e1" : "#1e293b";
+  const borderCol = darkMode ? "#475569" : "#e2e8f0";
+  const labelColor = darkMode ? "#94a3b8" : "#1e293b";
+  const iconColor = darkMode ? "#64748b" : "#cbd5e1";
+  const radioText = darkMode ? "#cbd5e1" : "#1e293b";
   const btnResetCol = darkMode ? "#94a3b8" : "#64748b";
 
   const inputStyle = {

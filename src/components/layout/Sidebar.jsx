@@ -4,6 +4,7 @@ import {
   DashboardOutlined,
   UserAddOutlined,
   AppstoreAddOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 const NAV = [
@@ -12,7 +13,7 @@ const NAV = [
   { to: "/jobs", label: "Jobs", icon: <AppstoreAddOutlined /> },
 ];
 
-const Sidebar = ({ darkMode }) => {
+const Sidebar = ({ darkMode, onSettingsClick }) => {
   const { pathname } = useLocation();
 
   const bg      = darkMode ? "#0f172a" : "#1e293b";
@@ -98,6 +99,40 @@ const Sidebar = ({ darkMode }) => {
           );
         })}
       </nav>
+
+      {/* Settings Button (State-based) */}
+      <div style={{ padding: "0 10px 10px" }}>
+        <button
+          onClick={onSettingsClick}
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "10px 14px",
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 500,
+            color: textCol,
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            transition: "all .2s",
+            textDecoration: "none",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#27354a";
+            e.currentTarget.style.color = "#f1f5f9";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = textCol;
+          }}
+        >
+          <span style={{ fontSize: 16 }}><SettingOutlined /></span>
+          Settings
+        </button>
+      </div>
 
       {/* Footer hint */}
       <div style={{ padding: "12px 20px 0" }}>

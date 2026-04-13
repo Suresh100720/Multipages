@@ -31,7 +31,7 @@ const Candidates = ({ darkMode }) => {
 
   return (
     <div>
-      <h2 style={{ color: darkMode ? "#f8fafc" : "#1e293b", marginBottom: "20px" }}>Candidates / Applicants</h2>
+      <h2 style={{ color: darkMode ? "#f8fafc" : "#1e293b", marginBottom: "20px" }}>Candidates</h2>
       <DashboardGrid
         rowData={candidates}
         onAddCandidate={() => {

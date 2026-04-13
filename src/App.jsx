@@ -3,6 +3,7 @@ import AppRoutes from "./routes/AppRoutes";
 import { ConfigProvider, theme } from "antd";
 import { AppContextProvider } from "./context/AppContext";
 
+
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const toggleTheme = () => setDarkMode((d) => !d);

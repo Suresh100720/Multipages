@@ -151,6 +151,7 @@ const Dashboard = ({ darkMode = false }) => {
             gridId={`stat-${statCardModal.type}`}
             paginationPageSize={10}
             theme={darkMode ? "ag-theme-alpine-dark" : "ag-theme-alpine"}
+            enableCheckboxes={false}
           />
         </div>
       </Modal>

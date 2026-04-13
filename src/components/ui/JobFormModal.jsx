@@ -96,8 +96,8 @@ const JobFormModal = ({ open, setOpen, refresh, darkMode }) => {
         <button
           onClick={handleCancel}
           style={{
-            width: 32, height: 32, borderRadius: "50%",
-            border: `1px solid ${borderCol}`,
+            width: 32, height: 32, borderRadius: 4,
+            border: "none",
             background: "transparent",
             cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
