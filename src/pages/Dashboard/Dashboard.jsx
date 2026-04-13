@@ -43,27 +43,25 @@ const Dashboard = ({ darkMode = false }) => {
   const total = rowData.length;
   const active = rowData.filter((r) => r.status === "Active").length;
   const inactive = rowData.filter((r) => r.status === "Inactive").length;
-  const uniqueRolesData = [...new Set(rowData.map((r) => r.role).filter(Boolean))].map((role) => ({
-    role,
-    count: rowData.filter((r) => r.role === role).length,
-  }));
-  const roles = uniqueRolesData.length;
+  // Applied candidates = those who have a role set (came via job apply form)
+  const appliedCandidates = rowData.filter((r) => r.role && r.role.trim() !== "");
+  const appliedCount = appliedCandidates.length;
 
   return (
-    <div style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       
       {/* ── Summary Cards ── */}
       <StatCards 
-        data={rowData} 
+        data={rowData}
+        appliedCount={appliedCount}
         onCardClick={(type) => {
           let filteredData = rowData;
           if (type === "active") {
             filteredData = rowData.filter((d) => d.status === "Active");
           } else if (type === "inactive") {
             filteredData = rowData.filter((d) => d.status === "Inactive");
-          } else if (type === "roles") {
-            // For roles, show all candidates grouped by role
-            filteredData = rowData;
+          } else if (type === "applied") {
+            filteredData = appliedCandidates;
           }
           setStatCardModal({ open: true, type, data: filteredData });
         }}
@@ -89,7 +87,7 @@ const Dashboard = ({ darkMode = false }) => {
           chartData={chartData}
           total={total}
           active={active}
-          roles={roles}
+          roles={appliedCount}
         />
       </div>
 
@@ -126,8 +124,8 @@ const Dashboard = ({ darkMode = false }) => {
         centered
         title={
           <span style={{ fontSize: "18px", fontWeight: 700, color: darkMode ? "#f1f5f9" : "#1e293b" }}>
-            {statCardModal.type === "roles" 
-              ? "Candidates by Role" 
+            {statCardModal.type === "applied"
+              ? "Applied Candidates"
               : `${statCardModal.type?.charAt(0).toUpperCase()}${statCardModal.type?.slice(1)} Candidates`}
           </span>
         }

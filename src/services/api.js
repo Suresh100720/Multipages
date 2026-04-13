@@ -29,4 +29,9 @@ export const deleteCandidate = (id) =>
 export const bulkDelete = (ids) =>
   API.post("/candidates/bulk-delete", { ids });
 
+export const fetchJobs = () => API.get("/jobs");
+
+export const addJob = (data) =>
+  API.post("/jobs", data);
+
 export default API;

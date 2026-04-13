@@ -1,7 +1,8 @@
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import HeaderBar from "./HeaderBar";
 
-const Layout = ({ children, darkMode, toggleTheme }) => {
+const Layout = ({ darkMode, toggleTheme }) => {
   return (
     <div
       style={{
@@ -33,9 +34,10 @@ const Layout = ({ children, darkMode, toggleTheme }) => {
             flex: 1,
             overflowY: "auto",
             background: darkMode ? "#0f172a" : "#f0f2f5",
+            padding: "24px",
           }}
         >
-          {children}
+          <Outlet />
         </div>
       </div>
     </div>

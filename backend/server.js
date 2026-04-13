@@ -6,6 +6,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import candidateRoutes from "./routes/candidateRoutes.js";
 
+import jobRoutes from "./routes/jobRoutes.js";
+
 const app = express();
 
 app.use(cors());
@@ -16,6 +18,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("DB Connection Error:", err));
 
 app.use("/api/candidates", candidateRoutes);
+app.use("/api/jobs", jobRoutes);
 
 const PORT = 5000;
 const HOST = "127.0.0.1";

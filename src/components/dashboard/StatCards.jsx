@@ -2,14 +2,13 @@ import {
   TeamOutlined,
   CheckCircleOutlined,
   StopOutlined,
-  AppstoreOutlined,
+  FileDoneOutlined,
 } from "@ant-design/icons";
 
-const StatCards = ({ data = [], onCardClick }) => {
+const StatCards = ({ data = [], appliedCount = 0, onCardClick }) => {
   const total = data.length;
   const inactive = data.filter((d) => d.status === "Inactive").length;
   const active = data.filter((d) => d.status === "Active").length;
-  const roles = [...new Set(data.map((d) => d.role).filter(Boolean))].length;
 
   const cardStyle = (bgColor, textColor, isClickable = false) => ({
     ...{
@@ -104,12 +103,12 @@ const StatCards = ({ data = [], onCardClick }) => {
         <p style={valueStyle("#6d28d9")}>{active}</p>
       </div>
 
-      {/* Unique Roles */}
+      {/* Applied Candidates */}
       <div 
-        style={cardStyle("#fffbeb", "#b45309", true)}
-        onClick={() => onCardClick && onCardClick("roles")}
+        style={cardStyle("#ecfdf5", "#059669", true)}
+        onClick={() => onCardClick && onCardClick("applied")}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = "0 12px 20px -4px rgba(180, 83, 9, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.08)";
+          e.currentTarget.style.boxShadow = "0 12px 20px -4px rgba(5, 150, 105, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.08)";
           e.currentTarget.style.transform = "translateY(-6px)";
         }}
         onMouseLeave={(e) => {
@@ -118,10 +117,10 @@ const StatCards = ({ data = [], onCardClick }) => {
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-          <h3 style={labelStyle("#b45309")}>Unique Roles</h3>
-          <AppstoreOutlined style={{ fontSize: "24px", opacity: 0.6, color: "#b45309" }} />
+          <h3 style={labelStyle("#059669")}>Applied Candidates</h3>
+          <FileDoneOutlined style={{ fontSize: "24px", opacity: 0.6, color: "#059669" }} />
         </div>
-        <p style={valueStyle("#b45309")}>{roles}</p>
+        <p style={valueStyle("#059669")}>{appliedCount}</p>
       </div>
     </div>
   );

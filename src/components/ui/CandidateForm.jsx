@@ -23,11 +23,23 @@ const experienceOptions = [
   { value: "5+ Years", label: "5+ Years" },
 ];
 
-/**
- * Clean, professional Candidate Form Component.
- * Uses Bootstrap for layout and Ant Design for inputs and validation.
- */
-const CandidateForm = ({ form, onFinish, isEdit }) => {
+const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
+  /* ── Dynamic tokens based on dark mode ── */
+  const inputBg    = darkMode ? "#0f172a" : "#fff";
+  const inputColor = darkMode ? "#f1f5f9" : "#1e293b";
+  const borderCol  = darkMode ? "#475569" : "#e2e8f0";
+  const labelColor = darkMode ? "#94a3b8" : "#64748b";
+  const iconColor  = darkMode ? "#64748b" : "#cbd5e1";
+  const radioText  = darkMode ? "#cbd5e1" : "#1e293b";
+  const btnResetCol = darkMode ? "#94a3b8" : "#64748b";
+
+  const inputStyle = {
+    borderRadius: 8,
+    borderColor: borderCol,
+    background: inputBg,
+    color: inputColor,
+  };
+
   return (
     <Form
       form={form}
@@ -38,42 +50,38 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
     >
       <div className="container-fluid p-0">
         <div className="row g-3">
-          {/* Name & Email Field */}
+
+          {/* Name & Email */}
           <div className="col-md-6">
             <Form.Item
               name="name"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Name</span>}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Name</span>}
               rules={[{ required: true, message: "Name is required" }]}
             >
-              <Input 
-                prefix={<UserOutlined style={{ color: "#cbd5e1" }} />} 
-                placeholder="Ex: John Doe" 
+              <Input
+                prefix={<UserOutlined style={{ color: iconColor }} />}
+                placeholder="Ex: John Doe"
                 size="large"
-                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
+                style={inputStyle}
               />
             </Form.Item>
           </div>
+
           <div className="col-md-6">
             <Form.Item
               name="email"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Email</span>}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Email</span>}
               rules={[
                 { required: true, message: "Email is required" },
-                { 
-                  type: "email", 
-                  message: "Enter a valid email address (e.g., name@example.com)" 
-                },
-                {
-                  pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Please include a valid domain (e.g. .com, .org)"
-                }
+                { type: "email", message: "Enter a valid email address (e.g., name@example.com)" },
+                { pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: "Please include a valid domain (.com, .org etc.)" },
               ]}
             >
-              <Input 
-                prefix={<MailOutlined style={{ color: "#cbd5e1" }} />} 
-                placeholder="john@example.com" 
+              <Input
+                prefix={<MailOutlined style={{ color: iconColor }} />}
+                placeholder="john@example.com"
                 size="large"
-                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
+                style={inputStyle}
               />
             </Form.Item>
           </div>
@@ -82,77 +90,82 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
           <div className="col-md-6">
             <Form.Item
               name="role"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Role</span>}
-              rules={[{ required: true, message: "Role selection is required" }]}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Role</span>}
+              rules={[{ required: true, message: "Role is required" }]}
             >
               <Select
                 placeholder="Select role"
                 size="large"
-                style={{ borderRadius: '8px', background: '#fff' }}
                 options={roleOptions}
-                suffixIcon={<BankOutlined style={{ color: "#cbd5e1" }} />}
+                suffixIcon={<BankOutlined style={{ color: iconColor }} />}
+                style={{ borderRadius: 8 }}
+                popupClassName={darkMode ? "dark-select-dropdown" : ""}
               />
             </Form.Item>
           </div>
+
           <div className="col-md-6">
             <Form.Item
               name="experience"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Experience</span>}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Experience</span>}
               rules={[{ required: true, message: "Experience is required" }]}
             >
               <Select
                 placeholder="Select years"
                 size="large"
-                style={{ borderRadius: '8px', background: '#fff' }}
                 options={experienceOptions}
-                suffixIcon={<TrophyOutlined style={{ color: "#cbd5e1" }} />}
+                suffixIcon={<TrophyOutlined style={{ color: iconColor }} />}
+                style={{ borderRadius: 8 }}
+                popupClassName={darkMode ? "dark-select-dropdown" : ""}
               />
             </Form.Item>
           </div>
 
-          {/* Status - Radio Buttons */}
+          {/* Status */}
           <div className="col-12">
             <Form.Item
               name="status"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Current Status</span>}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Current Status</span>}
               rules={[{ required: true, message: "Status is required" }]}
             >
-              <Radio.Group
-                options={[
-                  { label: <span style={{ fontWeight: 500, color: "#1e293b" }}>Active</span>, value: "Active" },
-                  { label: <span style={{ fontWeight: 500, color: "#1e293b" }}>Inactive</span>, value: "Inactive" },
-                ]}
-                style={{ display: "flex", gap: "20px" }}
+              <Radio.Group style={{ display: "flex", gap: 20 }}>
+                <Radio value="Active">
+                  <span style={{ fontWeight: 500, color: radioText }}>Active</span>
+                </Radio>
+                <Radio value="Inactive">
+                  <span style={{ fontWeight: 500, color: radioText }}>Inactive</span>
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
+          </div>
+
+          {/* State & Country */}
+          <div className="col-md-6">
+            <Form.Item
+              name="state"
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>State</span>}
+              rules={[{ required: true, message: "State is required" }]}
+            >
+              <Input
+                prefix={<EnvironmentOutlined style={{ color: iconColor }} />}
+                placeholder="Ex: Karnataka"
+                size="large"
+                style={inputStyle}
               />
             </Form.Item>
           </div>
 
-          {/* Location Details */}
-          <div className="col-md-6">
-            <Form.Item
-              name="state"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>State</span>}
-              rules={[{ required: true, message: "State is required" }]}
-            >
-              <Input 
-                prefix={<EnvironmentOutlined style={{ color: "#cbd5e1" }} />} 
-                placeholder="Ex: Karnataka" 
-                size="large"
-                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
-              />
-            </Form.Item>
-          </div>
           <div className="col-md-6">
             <Form.Item
               name="country"
-              label={<span className="fw-bold text-uppercase" style={{ fontSize: '11px', color: "#64748b" }}>Country</span>}
+              label={<span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelColor }}>Country</span>}
               rules={[{ required: true, message: "Country is required" }]}
             >
-              <Input 
-                prefix={<GlobalOutlined style={{ color: "#cbd5e1" }} />} 
-                placeholder="Ex: India" 
+              <Input
+                prefix={<GlobalOutlined style={{ color: iconColor }} />}
+                placeholder="Ex: India"
                 size="large"
-                style={{ borderRadius: '8px', borderColor: "#e2e8f0", background: '#fff', color: '#1e293b' }}
+                style={inputStyle}
               />
             </Form.Item>
           </div>
@@ -164,9 +177,8 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
             <Button
               size="large"
               type="text"
-              className="fw-semibold"
               onClick={() => form.resetFields()}
-              style={{ borderRadius: '8px', color: '#64748b' }}
+              style={{ borderRadius: 8, color: btnResetCol, fontWeight: 600 }}
             >
               Reset
             </Button>
@@ -174,12 +186,12 @@ const CandidateForm = ({ form, onFinish, isEdit }) => {
               type="primary"
               htmlType="submit"
               size="large"
-              className="px-4 shadow"
-              style={{ 
-                borderRadius: '8px',
-                background: '#1890ff',
-                border: 'none',
-                fontWeight: 'bold',
+              style={{
+                borderRadius: 8,
+                background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+                border: "none",
+                fontWeight: 700,
+                boxShadow: "0 4px 10px rgba(99,102,241,0.35)",
               }}
             >
               {isEdit ? "Update Candidate" : "Save Candidate"}

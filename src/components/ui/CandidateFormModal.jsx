@@ -4,12 +4,9 @@ import { CloseOutlined } from "@ant-design/icons";
 import { addCandidate, updateCandidate } from "../../services/api";
 import CandidateForm from "../../components/ui/CandidateForm";
 
-/**
- * Professional White/Neutral Modal for Candidate Management.
- * Modularized to use CandidateForm.jsx.
- */
 const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkMode }) => {
   const [form] = Form.useForm();
+  const isEdit = !!editData;
 
   useEffect(() => {
     if (open) {
@@ -21,32 +18,44 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkM
     }
   }, [editData, open, form]);
 
+  /* ── Submit with confirmation popup ── */
   const onFinish = async (values) => {
-    try {
-      if (editData) {
-        await updateCandidate(editData._id, values);
-        message.success("Candidate updated successfully!");
-      } else {
-        await addCandidate(values);
-        message.success("Candidate added successfully!");
-      }
-      // Close without confirmation when save is successful
-      setOpen(false);
-      clearEdit();
-      form.resetFields();
-      refresh();
-    } catch (error) {
-      message.error("Failed to save changes. Please try again.");
-    }
+    Modal.confirm({
+      title: isEdit ? "Confirm Update" : "Confirm Save",
+      content: isEdit
+        ? `Are you sure you want to update the details for "${editData?.name}"?`
+        : "Are you sure you want to save this new candidate?",
+      okText: isEdit ? "Yes, Update" : "Yes, Save",
+      cancelText: "Go Back",
+      centered: true,
+      onOk: async () => {
+        try {
+          if (isEdit) {
+            await updateCandidate(editData._id, values);
+            message.success("Candidate updated successfully!");
+          } else {
+            await addCandidate(values);
+            message.success("Candidate added successfully!");
+          }
+          setOpen(false);
+          clearEdit();
+          form.resetFields();
+          refresh();
+        } catch {
+          message.error("Failed to save changes. Please try again.");
+        }
+      },
+    });
   };
 
+  /* ── Cancel with confirmation popup ── */
   const handleCancel = () => {
     Modal.confirm({
-      title: "Confirm Cancellation",
+      title: "Discard Changes?",
       content: "Are you sure you want to cancel? Any unsaved changes will be lost.",
-      okText: "Cancel",
+      okText: "Yes, Discard",
       okType: "danger",
-      cancelText: "Continue Editing",
+      cancelText: "Keep Editing",
       centered: true,
       onOk: () => {
         setOpen(false);
@@ -56,7 +65,11 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkM
     });
   };
 
-  const isEdit = !!editData;
+  /* ── Dynamic colors ── */
+  const bg = darkMode ? "#1e293b" : "#fff";
+  const headerBg = darkMode ? "#0f172a" : "#fff";
+  const borderCol = darkMode ? "#334155" : "#e2e8f0";
+  const titleCol = darkMode ? "#f1f5f9" : "#1e293b";
 
   return (
     <Modal
@@ -66,33 +79,23 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkM
       width={650}
       centered
       closable={false}
-      styles={{ body: { padding: 0 } }}
-      style={{ borderRadius: 12, overflow: "hidden" }}
-      className={darkMode ? "dark-mode-modal" : ""}
+      styles={{ body: { padding: 0, background: bg }, mask: { backdropFilter: "blur(4px)" } }}
+      style={{ borderRadius: 16, overflow: "hidden" }}
     >
-      {/* ── Professional Header ── */}
-      <div className="border-bottom" style={{
-        backgroundColor: "#fff",
-        padding: "20px 32px",
-        position: "relative",
-        borderBottom: `1px solid #e2e8f0`
-      }}>
-        <div style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>
+      {/* ── Header ── */}
+      <div
+        style={{
+          backgroundColor: headerBg,
+          padding: "20px 32px",
+          position: "relative",
+          borderBottom: `1px solid ${borderCol}`,
+        }}
+      >
+        <div style={{ fontSize: 20, fontWeight: 700, color: titleCol }}>
           {isEdit ? "Edit Candidate Information" : "Register New Candidate"}
         </div>
-        
-        {/* Clean Close Button with Hover Effect */}
         <button
-          onClick={() => handleCancel()}
-          className="btn btn-light rounded-circle shadow-sm"
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#f1f5f9";
-            e.currentTarget.style.transform = "scale(1.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#fff";
-            e.currentTarget.style.transform = "scale(1)";
-          }}
+          onClick={handleCancel}
           style={{
             position: "absolute",
             top: 20,
@@ -102,19 +105,22 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkM
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: `1px solid #e2e8f0`,
-            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            border: `1px solid ${borderCol}`,
+            borderRadius: "50%",
+            background: "transparent",
             cursor: "pointer",
-            background: "#fff"
+            transition: "all 0.2s",
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = darkMode ? "#334155" : "#f1f5f9"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
         >
-          <CloseOutlined style={{ fontSize: 14, color: "#64748b" }} />
+          <CloseOutlined style={{ fontSize: 14, color: darkMode ? "#94a3b8" : "#64748b" }} />
         </button>
       </div>
 
-      {/* ── Modular Form Content ── */}
-      <div style={{ padding: "28px 32px", background: "#fff" }}>
-        <CandidateForm form={form} onFinish={onFinish} isEdit={isEdit} darkMode={false} />
+      {/* ── Form Body ── */}
+      <div style={{ padding: "28px 32px", background: bg }}>
+        <CandidateForm form={form} onFinish={onFinish} isEdit={isEdit} darkMode={darkMode} />
       </div>
     </Modal>
   );
