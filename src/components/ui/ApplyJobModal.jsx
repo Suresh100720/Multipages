@@ -1,34 +1,60 @@
-import { Modal, Form, Input, Select, Button, message } from "antd";
+import { Modal, Form, Input, Select, Button, message, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { addCandidate } from "../../services/api";
+
+const skillOptions = [
+  { value: "React", label: "React" },
+  { value: "Node.js", label: "Node.js" },
+  { value: "JavaScript", label: "JavaScript" },
+  { value: "Python", label: "Python" },
+  { value: "UI/UX Design", label: "UI/UX Design" },
+  { value: "Project Management", label: "Project Management" },
+  { value: "DevOps", label: "DevOps" },
+];
 
 const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
   const [form] = Form.useForm();
 
-  /* ── Submit with confirmation ── */
-  const handleFinish = (values) => {
-    Modal.confirm({
-      title: "Confirm Application",
-      content: `Submit your application for the "${job?.roleName}" role?`,
-      okText: "Yes, Apply",
-      cancelText: "Go Back",
-      centered: true,
-      onOk: async () => {
-        try {
-          const applicantData = { ...values, role: job.roleName, status: "Active" };
-          await addCandidate(applicantData);
-          message.success("Application submitted successfully!");
-          form.resetFields();
-          setOpen(false);
-        } catch (e) {
-          console.error(e);
-          message.error("Failed to submit application.");
-        }
-      },
-    });
+  /* ── Submit Logic ── */
+  const handleFinish = async (values) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("experience", values.experience);
+      formData.append("country", values.country || "");
+      formData.append("state", values.state || "");
+      formData.append("role", job.roleName);
+      formData.append("status", "Active");
+
+      if (values.skills) {
+        formData.append("skills", JSON.stringify(values.skills));
+      }
+
+      if (values.resume?.[0]?.originFileObj) {
+        formData.append("resume", values.resume[0].originFileObj);
+      }
+
+      await addCandidate(formData);
+      message.success("Application submitted successfully!");
+      form.resetFields();
+      setOpen(false);
+    } catch (e) {
+      console.error(e);
+      message.error("Failed to submit application.");
+    }
   };
 
-  /* ── Cancel with confirmation ── */
+  /* ── Cancel Logic ── */
   const handleCancel = () => {
+    const isDirty = form.isFieldsTouched();
+
+    if (!isDirty) {
+      form.resetFields();
+      setOpen(false);
+      return;
+    }
+
     Modal.confirm({
       title: "Discard Application?",
       content: "Are you sure you want to cancel? Your details will not be saved.",
@@ -50,7 +76,6 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
   const inputCol  = darkMode ? "#f1f5f9" : "#1e293b";
   const borderCol = darkMode ? "#475569" : "#d9d9d9";
   const labelCol  = darkMode ? "#94a3b8" : "#64748b";
-  const radioCol  = darkMode ? "#cbd5e1" : "#1e293b";
 
   const inputStyle = { background: inputBg, color: inputCol, borderColor: borderCol, borderRadius: 8 };
   const labelStyle = { fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: labelCol };
@@ -139,6 +164,21 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
             </Select>
           </Form.Item>
 
+          <Form.Item
+            name="skills"
+            label={<span style={labelStyle}>Key Skills</span>}
+          >
+            <Select
+              mode="multiple"
+              allowClear
+              placeholder="Select your skills"
+              size="large"
+              options={skillOptions}
+              style={{ borderRadius: 8 }}
+              popupClassName={darkMode ? "dark-select-dropdown" : ""}
+            />
+          </Form.Item>
+
           <div style={{ display: "flex", gap: 16 }}>
             <Form.Item
               name="country"
@@ -157,7 +197,22 @@ const ApplyJobModal = ({ open, setOpen, job, darkMode }) => {
             </Form.Item>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 8 }}>
+          <Form.Item
+            name="resume"
+            label={<span style={labelStyle}>Upload Resume</span>}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+          >
+            <Upload 
+              maxCount={1} 
+              beforeUpload={() => false}
+              listType="text"
+            >
+              <Button icon={<UploadOutlined />} style={inputStyle}>Click to Upload (PDF, DOCX)</Button>
+            </Upload>
+          </Form.Item>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 12, marginTop: 16 }}>
             <Button
               size="large"
               onClick={handleCancel}

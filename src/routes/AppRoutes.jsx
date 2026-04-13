@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Candidates from "../pages/Candidates/Candidates";
 import Jobs from "../pages/Jobs/Jobs";
-import AIAssistant from "../pages/AIAssistant/AIAssistant";
+import NotFound from "../pages/NotFound";
 import ErrorBoundary from "../components/ui/ErrorBoundary";
 
 const AppRoutes = ({ darkMode, toggleTheme }) => {
@@ -15,8 +15,9 @@ const AppRoutes = ({ darkMode, toggleTheme }) => {
             <Route index element={<Dashboard darkMode={darkMode} />} />
             <Route path="candidates" element={<Candidates darkMode={darkMode} />} />
             <Route path="jobs" element={<Jobs darkMode={darkMode} />} />
-            <Route path="ai-assistant" element={<AIAssistant darkMode={darkMode} />} />
           </Route>
+          {/* Catch-all route for 404 Not Found page */}
+          <Route path="*" element={<NotFound darkMode={darkMode} />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>

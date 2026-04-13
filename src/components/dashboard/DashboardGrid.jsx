@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState, useCallback } from "react";
-import { AgGridReact } from "ag-grid-react";
 import { Button, Dropdown, message, Modal, Tooltip, Typography } from "antd";
 import {
   PlusOutlined,
@@ -8,10 +7,8 @@ import {
   EditOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
-import { ColumnsToolPanelModule } from "ag-grid-enterprise";
-ModuleRegistry.registerModules([AllCommunityModule, ColumnsToolPanelModule]);
 
+import AgGridTable from "../ui/AgGridTable";
 import { exportToExcel } from "../../utils/exportExcel";
 import { deleteCandidate, bulkDelete } from "../../services/api";
 
@@ -43,55 +40,29 @@ const RoleCellRenderer = ({ value }) => (
   </div>
 );
 
-const StatusCellRenderer = ({ value }) => (
-  <div className="d-flex align-items-center h-100">
-    <span style={{
-      display: "inline-block",
-      padding: "4px 10px",
-      borderRadius: 20,
-      fontSize: 12,
-      fontWeight: 600,
-      background: value === "Active" ? "#d1fae5" : "#fee2e2",
-      color: value === "Active" ? "#065f46" : "#7f1d1d",
-    }}>
-      {value}
-    </span>
-  </div>
-);
-
 /**
- * Dashboard Grid with AG Grid v35 Integration.
- * - autoHeight layout (no fixed height, no blank space)
- * - Row Edit + Delete actions
- * - Bulk Delete + Export on selection
- * - Confirmation modals for all destructive actions
+ * Dashboard Grid using the modular AgGridTable.
  */
 const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }) => {
-  const gridRef = useRef();
   const [selectedRows, setSelectedRows] = useState([]);
+  const gridRef = useRef();
 
-
-  /* ── Auto Height on Grid Ready ── */
-  const onGridReady = useCallback(() => {
-    // Set domLayout to autoHeight so the grid expands to fit content
-    gridRef.current.api.setGridOption("domLayout", "autoHeight");
-    const el = document.getElementById(GRID_ID);
-    if (el) el.style.height = "";
-
-    // Restore saved column state
+  /* ── Restore Column State ── */
+  const onGridReady = useCallback((params) => {
+    gridRef.current = params;
     const saved = localStorage.getItem(LS_KEY);
-    if (saved && gridRef.current?.api) {
+    if (saved && params.api) {
       try {
         const columnState = JSON.parse(saved);
-        gridRef.current.api.applyColumnState({ state: columnState, applyOrder: true });
+        params.api.applyColumnState({ state: columnState, applyOrder: true });
       } catch (err) {
         console.error("Failed to restore column state:", err);
       }
     }
   }, []);
 
-  /* ── Save Column State on Changes ── */
-  const saveColumnState = useCallback(() => {
+  /* ── Save Column State ── */
+  const onColumnChanged = useCallback(() => {
     if (!gridRef.current?.api) return;
     const columnState = gridRef.current.api.getColumnState();
     localStorage.setItem(LS_KEY, JSON.stringify(columnState));
@@ -142,7 +113,7 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     });
   }, [selectedRows, refreshData]);
 
-  /* ── Export with Confirmation ── */
+  /* ── Export ── */
   const handleExport = useCallback(() => {
     if (selectedRows.length === 0) {
       return message.warning("Please select at least one candidate to export.");
@@ -160,22 +131,14 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     });
   }, [selectedRows]);
 
-  /* ── Add Candidate (direct, no popup) ── */
-  const handleAddCandidate = useCallback(() => {
-    if (onAddCandidate) onAddCandidate();
-  }, [onAddCandidate]);
-
-  /* ── Row Actions Cell Renderer ── */
+  /* ── Actions Cell Renderer ── */
   const ActionsCellRenderer = useCallback(({ data }) => {
     const items = [
       {
         key: "edit",
         icon: <EditOutlined style={{ color: "#6366f1" }} />,
         label: <span style={{ color: "#6366f1", fontWeight: 600 }}>Edit</span>,
-        onClick: () => {
-          // Open edit form directly — confirmation is inside the form on Save/Cancel
-          if (onEditCandidate) onEditCandidate(data);
-        },
+        onClick: () => onEditCandidate && onEditCandidate(data),
       },
       { type: "divider" },
       {
@@ -200,9 +163,6 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     );
   }, [handleDelete, onEditCandidate]);
 
-  /* ── Sidebar Config ── */
-  const sideBar = useMemo(() => ({ toolPanels: ["columns"] }), []);
-
   /* ── Column Defs ── */
   const columnDefs = useMemo(() => [
     {
@@ -213,7 +173,6 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
       flex: 1.5,
       pinned: "left",
       lockPinned: true,
-
     },
     {
       field: "email",
@@ -232,7 +191,6 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     {
       field: "status",
       headerName: "Status",
-      cellRenderer: StatusCellRenderer,
       minWidth: 120,
       flex: 1,
     },
@@ -249,12 +207,6 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
       flex: 1,
     },
     {
-      field: "state",
-      headerName: "State",
-      minWidth: 110,
-      flex: 1,
-    },
-    {
       headerName: "Actions",
       cellRenderer: ActionsCellRenderer,
       width: 90,
@@ -266,142 +218,59 @@ const DashboardGrid = ({ rowData, onAddCandidate, onEditCandidate, refreshData }
     },
   ], [ActionsCellRenderer]);
 
-  const onSelectionChanged = useCallback(() => {
-    const selected = gridRef.current.api.getSelectedRows();
-    setSelectedRows(selected);
-  }, []);
-
   return (
     <div style={{ width: "100%" }}>
-      {/* ── Toolbar ── */}
-      <div
-        style={{
-          padding: "16px 0",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 8,
-        }}
-      >
+      <div style={{ padding: "16px 0", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 22 }}>📋</span>
-          <Typography.Title
-            level={4}
-            style={{
-              margin: 0,
-              fontWeight: 800,
-              color: "#27a2c1ff",
-              fontSize: 20,
-              letterSpacing: "-0.3px",
-            }}
-          >
+          <Typography.Title level={4} style={{ margin: 0, fontWeight: 800, color: "#27a2c1ff", fontSize: 20, letterSpacing: "-0.3px" }}>
             All Candidates
           </Typography.Title>
           {selectedRows.length > 0 && (
-            <span
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                background: "#ede9fe",
-                color: "#6366f1",
-                padding: "2px 10px",
-                borderRadius: 20,
-              }}
-            >
+            <span style={{ fontSize: 12, fontWeight: 600, background: "#ede9fe", color: "#6366f1", padding: "2px 10px", borderRadius: 20 }}>
               {selectedRows.length} selected
             </span>
           )}
         </div>
 
         <div className="d-flex gap-2 flex-wrap">
-          {/* Bulk Delete – only visible when rows are selected */}
           {selectedRows.length > 0 && (
-            <Tooltip title={`Delete ${selectedRows.length} selected`}>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={handleBulkDelete}
-                style={{ borderRadius: 8, fontWeight: 600 }}
-              >
-                Delete Selected ({selectedRows.length})
-              </Button>
-            </Tooltip>
+            <Button danger icon={<DeleteOutlined />} onClick={handleBulkDelete} style={{ borderRadius: 8, fontWeight: 600 }}>
+              Delete Selected ({selectedRows.length})
+            </Button>
           )}
-
-          {/* Export – only visible when rows are selected */}
           {selectedRows.length > 0 && (
-            <Button
-              icon={<FileExcelOutlined />}
-              onClick={handleExport}
-              style={{
-                borderRadius: 8,
-                fontWeight: 600,
-                borderColor: "#16a34a",
-                color: "#16a34a",
-              }}
-            >
+            <Button icon={<FileExcelOutlined />} onClick={handleExport} style={{ borderRadius: 8, fontWeight: 600, borderColor: "#16a34a", color: "#16a34a" }}>
               Export ({selectedRows.length})
             </Button>
           )}
-
-          {/* Add Candidate */}
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddCandidate}
-            style={{
-              borderRadius: 8,
-              background: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-              border: "none",
-              fontWeight: 600,
-              boxShadow: "0 4px 10px rgba(99,102,241,0.35)",
-            }}
-          >
+          <Button type="primary" icon={<PlusOutlined />} onClick={onAddCandidate} style={{ borderRadius: 8, background: "linear-gradient(135deg,#6366f1,#8b5cf6)", border: "none", fontWeight: 600, boxShadow: "0 4px 10px rgba(99,102,241,0.35)" }}>
             Add Candidate
           </Button>
         </div>
       </div>
 
-      {/* ── AG Grid – autoHeight (no fixed height wrapper) ── */}
-      <div id={GRID_ID} className="ag-theme-alpine" style={{ width: "100%" }}>
-        <AgGridReact
-          ref={gridRef}
-          rowData={rowData}
-          columnDefs={columnDefs}
-          onGridReady={onGridReady}
-          onColumnVisible={saveColumnState}
-          onColumnResized={saveColumnState}
-          onColumnMoved={saveColumnState}
-          sideBar={sideBar}
-          domLayout="autoHeight"
-          rowSelection={{
-            mode: "multiRow",
-            headerCheckbox: true,
-            checkboxes: true,
-            enableClickSelection: false,
-          }}
-          selectionColumnDef={{
-            pinned: "left",
-            lockPinned: true,
-            lockPosition: "left",
-            minWidth: 48,
-            maxWidth: 48,
-            resizable: false,
-          }}
-          pagination={true}
-          paginationPageSize={10}
-          paginationPageSizeSelector={[5, 10, 20, 50]}
-          onSelectionChanged={onSelectionChanged}
-          defaultColDef={{
-            resizable: true,
-            sortable: true,
-            minWidth: 100,
-          }}
-          rowHeight={52}
-          headerHeight={48}
-        />
-      </div>
+      <AgGridTable
+        gridId={GRID_ID}
+        rowData={rowData}
+        columnDefs={columnDefs}
+        onGridReady={onGridReady}
+        onColumnChanged={onColumnChanged}
+        onSelectionChanged={() => {
+          if (gridRef.current?.api) {
+            setSelectedRows(gridRef.current.api.getSelectedRows());
+          }
+        }}
+        sideBar={{ toolPanels: ["columns"] }}
+        selectionColumnDef={{
+           pinned: "left",
+           lockPinned: true,
+           lockPosition: "left",
+           minWidth: 48,
+           maxWidth: 48,
+           resizable: false,
+        }}
+      />
     </div>
   );
 };

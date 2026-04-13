@@ -59,7 +59,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
               rules={[{ required: true, message: "Name is required" }]}
             >
               <Input
-                prefix={<UserOutlined style={{ color: iconColor }} />}
                 placeholder="Ex: John Doe"
                 size="large"
                 style={inputStyle}
@@ -78,7 +77,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
               ]}
             >
               <Input
-                prefix={<MailOutlined style={{ color: iconColor }} />}
                 placeholder="john@example.com"
                 size="large"
                 style={inputStyle}
@@ -97,7 +95,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
                 placeholder="Select role"
                 size="large"
                 options={roleOptions}
-                suffixIcon={<BankOutlined style={{ color: iconColor }} />}
                 style={{ borderRadius: 8 }}
                 popupClassName={darkMode ? "dark-select-dropdown" : ""}
               />
@@ -114,7 +111,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
                 placeholder="Select years"
                 size="large"
                 options={experienceOptions}
-                suffixIcon={<TrophyOutlined style={{ color: iconColor }} />}
                 style={{ borderRadius: 8 }}
                 popupClassName={darkMode ? "dark-select-dropdown" : ""}
               />
@@ -147,7 +143,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
               rules={[{ required: true, message: "State is required" }]}
             >
               <Input
-                prefix={<EnvironmentOutlined style={{ color: iconColor }} />}
                 placeholder="Ex: Karnataka"
                 size="large"
                 style={inputStyle}
@@ -162,7 +157,6 @@ const CandidateForm = ({ form, onFinish, isEdit, darkMode = false }) => {
               rules={[{ required: true, message: "Country is required" }]}
             >
               <Input
-                prefix={<GlobalOutlined style={{ color: iconColor }} />}
                 placeholder="Ex: India"
                 size="large"
                 style={inputStyle}

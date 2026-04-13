@@ -217,3 +217,32 @@
   border-color: #475569 !important;
 }
 
+/* ─────────────────────────────────────── *
+ * AG GRID - StatCard Modal Borders        *
+ * ─────────────────────────────────────── */
+[id^="stat-"] .ag-header-cell,
+[id^="stat-"] .ag-cell {
+  border-right: 1px solid #e5e7eb !important;
+}
+
+[id^="stat-"] .ag-header-row,
+[id^="stat-"] .ag-row {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Dark Mode Borders */
+.ag-theme-alpine-dark[id^="stat-"] .ag-header-cell,
+.ag-theme-alpine-dark[id^="stat-"] .ag-cell {
+  border-right: 1px solid #334155 !important;
+}
+
+.ag-theme-alpine-dark[id^="stat-"] .ag-header-row,
+.ag-theme-alpine-dark[id^="stat-"] .ag-row {
+  border-bottom: 1px solid #334155 !important;
+}
+
+/* Remove last column border */
+[id^="stat-"] .ag-cell:last-child,
+[id^="stat-"] .ag-header-cell:last-child {
+  border-right: none !important;
+}

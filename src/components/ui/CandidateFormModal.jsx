@@ -18,38 +18,54 @@ const CandidateFormModal = ({ open, setOpen, editData, refresh, clearEdit, darkM
     }
   }, [editData, open, form]);
 
-  /* ── Submit with confirmation popup ── */
-  const onFinish = async (values) => {
-    Modal.confirm({
-      title: isEdit ? "Confirm Update" : "Confirm Save",
-      content: isEdit
-        ? `Are you sure you want to update the details for "${editData?.name}"?`
-        : "Are you sure you want to save this new candidate?",
-      okText: isEdit ? "Yes, Update" : "Yes, Save",
-      cancelText: "Go Back",
-      centered: true,
-      onOk: async () => {
-        try {
-          if (isEdit) {
-            await updateCandidate(editData._id, values);
-            message.success("Candidate updated successfully!");
-          } else {
-            await addCandidate(values);
-            message.success("Candidate added successfully!");
-          }
-          setOpen(false);
-          clearEdit();
-          form.resetFields();
-          refresh();
-        } catch {
-          message.error("Failed to save changes. Please try again.");
-        }
-      },
-    });
+  /* ── Core Submit Logic ── */
+  const submitData = async (values) => {
+    try {
+      if (isEdit) {
+        await updateCandidate(editData._id, values);
+        message.success("Candidate updated successfully!");
+      } else {
+        await addCandidate(values);
+        message.success("Candidate added successfully!");
+      }
+      setOpen(false);
+      clearEdit();
+      form.resetFields();
+      refresh();
+    } catch {
+      message.error("Failed to save changes. Please try again.");
+    }
   };
 
-  /* ── Cancel with confirmation popup ── */
+  /* ── Submit Request ── */
+  const onFinish = async (values) => {
+    if (isEdit) {
+      Modal.confirm({
+        title: "Confirm Update",
+        content: `Are you sure you want to update the details for "${editData?.name}"?`,
+        okText: "Yes, Update",
+        cancelText: "Go Back",
+        centered: true,
+        onOk: () => submitData(values),
+      });
+    } else {
+      // Save directly for new candidates as per request
+      await submitData(values);
+    }
+  };
+
+  /* ── Cancel Logic ── */
   const handleCancel = () => {
+    const isDirty = form.isFieldsTouched();
+    
+    if (!isDirty) {
+      // If nothing changed, just close
+      setOpen(false);
+      clearEdit();
+      form.resetFields();
+      return;
+    }
+
     Modal.confirm({
       title: "Discard Changes?",
       content: "Are you sure you want to cancel? Any unsaved changes will be lost.",

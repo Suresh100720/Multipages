@@ -4,31 +4,30 @@ import { addJob } from "../../services/api";
 const JobFormModal = ({ open, setOpen, refresh, darkMode }) => {
   const [form] = Form.useForm();
 
-  /* ── Submit with confirmation ── */
-  const handleFinish = (values) => {
-    Modal.confirm({
-      title: "Confirm Post Job",
-      content: `Are you sure you want to post the "${values.roleName}" role?`,
-      okText: "Yes, Post Job",
-      cancelText: "Go Back",
-      centered: true,
-      onOk: async () => {
-        try {
-          await addJob(values);
-          message.success("Job posted successfully!");
-          form.resetFields();
-          setOpen(false);
-          refresh();
-        } catch (e) {
-          console.error(e);
-          message.error("Failed to post job.");
-        }
-      },
-    });
+  /* ── Submit Logic ── */
+  const handleFinish = async (values) => {
+    try {
+      await addJob(values);
+      message.success("Job posted successfully!");
+      form.resetFields();
+      setOpen(false);
+      refresh();
+    } catch (e) {
+      console.error(e);
+      message.error("Failed to post job.");
+    }
   };
 
-  /* ── Cancel with confirmation ── */
+  /* ── Cancel Logic ── */
   const handleCancel = () => {
+    const isDirty = form.isFieldsTouched();
+    
+    if (!isDirty) {
+      form.resetFields();
+      setOpen(false);
+      return;
+    }
+
     Modal.confirm({
       title: "Discard Changes?",
       content: "Are you sure you want to cancel? Any unsaved details will be lost.",

@@ -12,6 +12,8 @@ const candidateSchema = new mongoose.Schema(
     state: { type: String, default: "" },
 
     experience: { type: String, default: "Fresher" },
+    skills: { type: [String], default: [] },
+    resume: { type: String, default: "" },
   },
   { timestamps: true }
 );
